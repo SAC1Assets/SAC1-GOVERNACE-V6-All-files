@@ -1,8 +1,19 @@
-// pay.sableassent.com — Main checkout page
+// pay.sableassent.com — Main checkout page (v1.3.2 + i18n)
 // Reads ?source= and ?amount= from URL to auto-fill from any referring site
 
 import Head from 'next/head'
 import { useState, useEffect, useCallback } from 'react'
+import dynamic from 'next/dynamic'
+
+// i18n — dynamic import to avoid SSR issues
+const GlobalLanguageBanner = dynamic(
+  () => import('../utils/i18n/LanguageSelector').then(m => m.GlobalLanguageBanner),
+  { ssr: false }
+)
+const NavbarLanguageButton = dynamic(
+  () => import('../utils/i18n/LanguageSelector').then(m => m.NavbarLanguageButton),
+  { ssr: false }
+)
 
 const API_BASE = 'https://app.base44.com/api/apps/6a13d16e7f282082e39578f6/functions'
 const CREATE_URL = `${API_BASE}/paypalCreateOrder`
@@ -39,8 +50,6 @@ const PRODUCTS = [
     suggestedAmounts: [97, 299, 549],
   },
 ]
-
-const PRODUCT_MAP = Object.fromEntries(PRODUCTS.map(p => [p.customId, p]))
 
 function formatUSD(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
@@ -102,10 +111,13 @@ export default function Home() {
     <>
       <Head>
         <title>SableAssent Pay — Secure Payment Gateway</title>
-        <meta name="description" content="Unified payment gateway for SableAssent, SAC1Gov, and OurFrontDeskAI" />
+        <meta name="description" content="Unified payment gateway for SableAssent, SAC1Gov, and OurFrontDeskAI — 170+ countries" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
+      {/* ── Global Language Banner — sticky top bar ── */}
+      <GlobalLanguageBanner site="SACPay" />
 
       <div style={{
         fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif',
@@ -122,9 +134,11 @@ export default function Home() {
             <span style={{ color: '#fff', fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em' }}>
               SableAssent Pay
             </span>
+            {/* Compact language picker in header area */}
+            <NavbarLanguageButton style={{ marginLeft: 8 }} />
           </div>
           <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>
-            Unified Payment Gateway · pay.sableassent.com
+            Unified Payment Gateway · pay.sableassent.com · 🌍 170+ Countries
           </div>
         </div>
 
@@ -271,7 +285,7 @@ export default function Home() {
 
         {/* Footer */}
         <div style={{ textAlign: 'center', marginTop: 20, color: 'rgba(255,255,255,0.3)', fontSize: 11 }}>
-          🔒 256-bit SSL · PayPal Secured · SableAssent Global Ltd
+          🔒 256-bit SSL · PayPal Secured · SableAssent Global Ltd · 🌍 170+ Countries
         </div>
         <div style={{ marginTop: 8, display: 'flex', gap: 16 }}>
           {PRODUCTS.map(p => (
