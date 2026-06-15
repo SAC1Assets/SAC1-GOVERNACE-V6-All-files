@@ -5,10 +5,13 @@
 //
 // SDK: @privy-io/react-auth ^1.91.0
 // Privy config: embeddedWallets.ethereum.createOnLogin (v1.91+ shape)
+// Analytics: @vercel/analytics + @vercel/speed-insights
 // ─────────────────────────────────────────────────────────────────────────────
 
 import '../styles/globals.css';
 import { PrivyProvider } from '@privy-io/react-auth';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || '';
 
@@ -33,8 +36,6 @@ export default function App({ Component, pageProps }) {
       appId={PRIVY_APP_ID}
       config={{
         // ── Embedded wallets — v1.91+ nested shape ───────────────────────────
-        // Auto-creates a Polygon embedded wallet for every new user on login.
-        // No seed phrase, no MetaMask, no key management required.
         embeddedWallets: {
           ethereum: {
             createOnLogin: 'users-without-wallets',
@@ -51,7 +52,7 @@ export default function App({ Component, pageProps }) {
         // ── Appearance — SableAssent brand ───────────────────────────────────
         appearance: {
           theme:       'light',
-          accentColor: '#d4a017',   // SableAssent gold
+          accentColor: '#d4a017',
           logo:        'https://sableassent.com/logo.png',
           showWalletLoginFirst: false,
         },
@@ -64,6 +65,12 @@ export default function App({ Component, pageProps }) {
       }}
     >
       <Component {...pageProps} />
+
+      {/* Vercel Analytics — tracks page views, unique visitors, countries */}
+      <Analytics />
+
+      {/* Vercel Speed Insights — tracks Core Web Vitals per page */}
+      <SpeedInsights />
     </PrivyProvider>
   );
 }
