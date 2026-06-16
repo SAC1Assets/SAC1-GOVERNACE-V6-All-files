@@ -13,6 +13,7 @@ export default async function handler(req, res) {
 
   const nameMap = {
     'daryl@sableassent.net':       'Daryl',
+    'iimpacttheworld@gmail.com':   'Daryl',
     'admin@sableassent.com':       'Admin',
     'compliance@sableassent.com':  'Compliance Officer',
     'ceo@sableassent.com':         'Chief Executive',
@@ -79,7 +80,7 @@ export default async function handler(req, res) {
       headers: { 'Authorization': `Bearer ${SENDGRID_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         personalizations: [{ to: [{ email, name }] }],
-        from: { email: 'security@sableassent.com', name: 'SableAssent Security' },
+        from: { email: 'noreply@sableassent.com', name: 'SableAssent Security' },
         subject: `🔐 Your Admin Access Code: ${otp}`,
         content: [{ type: 'text/html', value: html }],
       }),
