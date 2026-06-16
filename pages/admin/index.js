@@ -9,6 +9,7 @@ import Head from 'next/head';
 // ── Authorised executive staff emails ────────────────────────────────────────
 const AUTHORISED_EMAILS = [
   'daryl@sableassent.net',
+  'iimpacttheworld@gmail.com',
   'admin@sableassent.com',
   'compliance@sableassent.com',
   'ceo@sableassent.com',
