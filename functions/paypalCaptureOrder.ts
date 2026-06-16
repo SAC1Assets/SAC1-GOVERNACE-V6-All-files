@@ -465,6 +465,19 @@ Deno.serve(async (req: Request): Promise<Response> => {
       now,
     });
 
+    // ── Send welcome email for first-time buyers ───────────────────────────
+    try {
+      const prevTxns = await base44.asServiceRole.entities.Transaction.filter({ user_email: payerEmail });
+      if ((prevTxns?.length ?? 0) <= 1) {
+        fetch('https://app.base44.com/api/apps/6a13d16e7f282082e39578f6/functions/sendWelcomeEmail', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: payerEmail, name: payerName, sac1Amount: Math.floor(captureAmt / SAC1_PRICE_USD), amountUsd: captureAmt, orderId }),
+        }).catch(() => {});
+        console.log(`[PayPal] Welcome email triggered for first-time buyer: ${payerEmail}`);
+      }
+    } catch { /* non-critical */ }
+
     return new Response(JSON.stringify({
       success:    true,
       captureId,
