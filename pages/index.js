@@ -196,7 +196,7 @@ function PersonaKYC({ email, fullName, onComplete, onError }) {
 }
 
 // PayPal button component
-function PayPalButton({ amount, product, email, fullName, inquiryId }) {
+function PayPalButton({ amount, product, email, fullName, inquiryId, walletAddress }) {
   const containerRef = useRef(null)
   const [loaded, setLoaded]   = useState(false)
   const [error, setError]     = useState('')
@@ -235,7 +235,7 @@ function PayPalButton({ amount, product, email, fullName, inquiryId }) {
           const res = await fetch(`${API_BASE}/paypalCaptureOrder`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderId: data.orderID, email, inquiryId }),
+            body: JSON.stringify({ orderId: data.orderID, email, inquiryId, walletAddress }),
           })
           const result = await res.json()
           setLoading(false)
@@ -254,7 +254,7 @@ function PayPalButton({ amount, product, email, fullName, inquiryId }) {
     if (!existing) {
       const script  = document.createElement('script')
       script.id     = 'paypal-sdk'
-      script.src    = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'AbnTqBk2pJQkDLzs2L26Sj_YWEJagEsv0JiNJeE4B2vwfP3YwHVIJ7Bk7BT0NPuyxHTmFIc8XiH_pBVl'}&currency=USD&intent=capture`
+      script.src    = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'ASXxTiNJYfCp0YNpnKE_dg__8bTLqhhYet26U22ywYXu2LKxRWX7HDUmyiVk'}&currency=USD&intent=capture`
       script.async  = true
       script.onload = initPayPal
       document.head.appendChild(script)
@@ -288,6 +288,7 @@ export default function Home() {
   const [amount, setAmount]       = useState('')
   const [product, setProduct]     = useState(PRODUCTS[1])
   const [inquiryId, setInquiryId] = useState('')
+  const [walletAddress, setWalletAddress] = useState('')
   const [kycFields, setKycFields] = useState(null)
   const [infoError, setInfoError] = useState('')
 
@@ -581,12 +582,32 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* Polygon Wallet Address Input */}
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#374151', marginBottom: 6 }}>
+                    Polygon Wallet Address <span style={{ color: '#ef4444' }}>*</span>
+                    <span style={{ fontWeight: 400, color: '#6b7280', marginLeft: 4 }}>(required for delivery)</span>
+                  </label>
+                  <input
+                    className="input-field"
+                    type="text"
+                    placeholder="0x742d35Cc6634C0532925a3b8D4C9B8..."
+                    value={walletAddress}
+                    onChange={e => setWalletAddress(e.target.value.trim())}
+                    style={{ fontFamily: 'monospace', fontSize: 13 }}
+                  />
+                  <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 4 }}>
+                    SAC1 tokens will be sent to this Polygon (MATIC) wallet. Double-check before paying.
+                  </div>
+                </div>
+
                 <PayPalButton
                   amount={amount}
                   product={product}
                   email={email}
                   fullName={fullName}
                   inquiryId={inquiryId}
+                  walletAddress={walletAddress}
                 />
 
                 <div style={{ marginTop: 16, textAlign: 'center', fontSize: 12, color: '#9ca3af' }}>
